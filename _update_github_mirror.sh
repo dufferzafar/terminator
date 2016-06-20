@@ -1,7 +1,11 @@
 #!/bin/bash
 
-# echo "bzr: Updating"
-# bzr update
+git stash >/dev/null 2>&1
+git checkout launchpad >/dev/null 2>&1
+echo "git: Checked out launchpad branch. All Changes stashed!"
+
+echo "bzr: Updating"
+bzr update
 
 # Extract fields from bzr log
 LOG=$(bzr log -r-1)
@@ -18,13 +22,14 @@ fi
 
 echo "bzr: Pulled Revision $revno"
 
-# git checkout launchpad
-
-echo "git: Adding and Committing!"
 git add . >/dev/null 2>&1
 git commit -m "$revno: $message" --date "$timestamp" --author "$author" > /dev/null 2>&1
 
 echo "git: Changes Committed"
 
 echo "git: Pushing to Github"
-# git push origin launchpad
+git push origin launchpad
+
+git checkout master >/dev/null 2>&1
+git stash pop >/dev/null 2>&1
+echo "git: Back to master"
